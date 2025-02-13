@@ -1,7 +1,7 @@
-# AudioScope
+# AudioCapture
 
 ##  Overview
-AudioScope is a real-time audio signal visualizer built in Java. It captures live audio from the microphone, processes the waveform, and displays it dynamically using **JFreeChart**. This tool can be expanded with additional signal processing features like **filtering, FFT analysis, and equalization**
+AudioCapture is a real-time audio signal visualizer built in Java. It captures live audio from the microphone, processes the waveform, and displays it dynamically using **JFreeChart**. This tool can be expanded with additional signal processing features like **filtering, FFT analysis, and equalization**
 
 ##  Features
 - **Real-time audio capture** from the microphone
@@ -18,8 +18,8 @@ AudioScope is a real-time audio signal visualizer built in Java. It captures liv
 
 ### **Clone & Build**
 ```sh
-git clone https://github.com/Eng-Bunnys/AudioScope.git
-cd AudioScope
+git clone https://github.com/Eng-Bunnys/AudioCapture.git
+cd AudioCapture
 mvn clean install
 ```
 
