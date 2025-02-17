@@ -25,6 +25,8 @@ public class MainWindow {
     private final JButton stopButton;
     private final JButton lpfButton;
 
+    private boolean isCleanedUp = false;
+
     public MainWindow(AudioFormat format, AudioDeviceManager deviceManager, int sampleSize) {
         this.frame = createMainFrame();
         this.waveformChart = new WaveformChart(sampleSize);
@@ -159,17 +161,25 @@ public class MainWindow {
     }
 
     public void cleanupAndExit() {
+        if (isCleanedUp)
+            return;
+        isCleanedUp = true;
+
         LOGGER.info("Shutting down the application... [From MW]");
 
         // Stop capturing audio
         audioHandler.stopCapture();
         audioHandler.close();
 
-        // Dispose the frame and exit on EDT
-        SwingUtilities.invokeLater(() -> {
-            frame.dispose();   // Dispose the window
-            System.exit(0);    // Exit the application
+        // Dispose the window
+        SwingUtilities.invokeLater(frame::dispose);
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                cleanupAndExit();
+                System.exit(0); // Ensure JVM exits after cleanup
+            }
         });
     }
-
 }

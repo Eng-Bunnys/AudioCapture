@@ -19,12 +19,9 @@ public class Main {
         try {
             MainWindow mainWindow = getMainWindow();
 
-            // Add shutdown hook for cleanup
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                LOGGER.info("Application shutting down... [From Main]");
-                // Clean up the resources in the main window
+                LOGGER.info("Shutting down");
                 mainWindow.cleanupAndExit();
-                mainWindow.dispose();  // Dispose of the window
             }));
 
         } catch (Exception e) {
@@ -42,11 +39,9 @@ public class Main {
         if (deviceManager.getInputDevices().isEmpty())
             throw new IllegalStateException("No compatible audio input devices found");
 
-        // Create the main window
-        MainWindow mainWindow = new MainWindow(
+        return new MainWindow(
                 format,
                 deviceManager,
                 AudioConstants.DEFAULT_SAMPLE_SIZE);
-        return mainWindow;
     }
 }
