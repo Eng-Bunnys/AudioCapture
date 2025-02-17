@@ -1,5 +1,9 @@
 # AudioCapture
 
+# ⚠️ Warning 
+I am **not** a signals expert, but I loved the Signal Analysis course I took, which is why I'm making this for **fun**.
+Yes, you might learn a thing or two from this project, but this was **NOT** made for educational purposes.
+
 ##  Overview
 AudioCapture is a real-time audio signal visualizer built in Java. It captures live audio from the microphone, processes the waveform, and displays it dynamically using **JFreeChart**. This tool can be expanded with additional signal processing features like **filtering, FFT analysis, and equalization**
 
@@ -44,3 +48,4 @@ This project is licensed under the **MIT License**.
 ---
 
 ### Made using Java by Bunnys 
+Enjoy experimenting!
