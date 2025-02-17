@@ -1,9 +1,14 @@
 package org.bunnys.audio.processing;
 
 public class LowPassFilter implements AudioProcessor {
-    private final float alpha;
+    // Makes this thread safe for any real time updates
+    private volatile float alpha;
 
     public LowPassFilter(float alpha) {
+        this.alpha = alpha;
+    }
+
+    public void setAlpha(float alpha) {
         this.alpha = alpha;
     }
 

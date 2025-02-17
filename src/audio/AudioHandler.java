@@ -22,20 +22,20 @@ public class AudioHandler implements AutoCloseable {
     private Thread captureThread;
     private volatile boolean isCapturing;
     private volatile float[] audioBuffer;
-    private AudioProcessor currentProcessor; // Add a variable to hold the current processor
+    private AudioProcessor currentProcessor;
 
     public AudioHandler(AudioFormat audioFormat, Consumer<float[]> waveformUpdateCallback) {
         this.audioFormat = audioFormat;
         this.waveformUpdateCallback = waveformUpdateCallback;
         this.recorder = new AudioRecorder(audioFormat);
         this.isRecording = new AtomicBoolean(false);
-        this.currentProcessor = null;  // Initially no processor
+        this.currentProcessor = null;
     }
 
     public void startCapture(Mixer.Info selectedDevice) {
-        if (selectedDevice == null) {
+        if (selectedDevice == null)
             throw new IllegalArgumentException("Selected device cannot be null");
-        }
+
         stopCapture();
 
         try {
@@ -50,9 +50,8 @@ public class AudioHandler implements AutoCloseable {
         Mixer mixer = AudioSystem.getMixer(selectedDevice);
         DataLine.Info targetInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
 
-        if (!mixer.isLineSupported(targetInfo)) {
+        if (!mixer.isLineSupported(targetInfo))
             throw new LineUnavailableException("Selected device does not support the required format");
-        }
 
         targetLine = (TargetDataLine) mixer.getLine(targetInfo);
         targetLine.open(audioFormat);
@@ -70,26 +69,23 @@ public class AudioHandler implements AutoCloseable {
         byte[] buffer = new byte[AudioConstants.BUFFER_SIZE];
         while (isCapturing && targetLine.isOpen()) {
             int bytesRead = targetLine.read(buffer, 0, buffer.length);
-            if (bytesRead > 0) {
+
+            if (bytesRead > 0)
                 processAudioData(buffer, bytesRead);
-            }
         }
     }
 
     private synchronized void processAudioData(byte[] buffer, int bytesRead) {
-        if (isRecording.get()) {
+        if (isRecording.get())
             recorder.writeData(buffer, bytesRead);
-        }
 
         float[] samples = new float[bytesRead / 2];
         for (int i = 0; i < samples.length; i++) {
             samples[i] = (buffer[2 * i] << 8) | (buffer[2 * i + 1] & 0xFF);
         }
 
-        // Apply the processor if one is set
-        if (currentProcessor != null) {
+        if (currentProcessor != null)
             samples = currentProcessor.process(samples);
-        }
 
         this.audioBuffer = samples;
         waveformUpdateCallback.accept(samples);
@@ -113,7 +109,7 @@ public class AudioHandler implements AutoCloseable {
             }
 
             if (this.currentProcessor != processor) {
-                this.currentProcessor = processor; // Store the processor
+                this.currentProcessor = processor;
                 float[] processed = processor.process(audioBuffer);
                 this.audioBuffer = processed;
                 waveformUpdateCallback.accept(processed);
@@ -123,16 +119,16 @@ public class AudioHandler implements AutoCloseable {
 
     public void removeAudioProcessor() {
         synchronized (this) {
-            this.currentProcessor = null; // Disable the processor
+            this.currentProcessor = null;
         }
     }
 
     public void stopCapture() {
         isCapturing = false;
         if (captureThread != null) {
-            captureThread.interrupt(); // Interrupt the capture thread
+            captureThread.interrupt();
             try {
-                captureThread.join(1000); // Wait for the thread to finish
+                captureThread.join(1000); // Waits for the thread to finish
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
